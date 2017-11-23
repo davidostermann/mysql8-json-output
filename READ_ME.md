@@ -1,18 +1,41 @@
-# install docker mysql
+# mysql 8.0 and JSON output
+
+ref. : https://mysqlserverteam.com/mysql-8-0-labs-json-aggregation-functions/
+
+## Install DB and Adminer :
 
 ```
 docker-compose up
 ```
+## Connection
 
-Connection au localhost:8080
+### Go to localhost:8080
 
+Credentials :
+``` 
 System : MySQL
 Server : db
 Username : root
 Password : example
-Database : (keep it empty)
+Database : (keep it empty
+```
 
-Lancer le script sql (run sql command)
+### Or connect via mysql command line cli :
+
+```docker ps``` to retrieve mysql container ID
+
+```docker exec -ti [mysql container ID] bash``` to start shell interface
+
+```mysql -u root -p``` to run mysql command line cli
+
+## DB Creation
+
+* via mysql command line cli, copy/paste setup.sql content
+* via Adminer :
+  
+  * click on "run sql command"
+  * copy/paste setup.sql content
+  * click on "execute"
 
 -----
 
@@ -27,8 +50,6 @@ JOIN todos as t ON c.id = t.category_id
 ```
 
 ### En mieux, avec aggrégation (GROUP BY et JSON_ARRAYAGG) :
-
-ref. : https://mysqlserverteam.com/mysql-8-0-labs-json-aggregation-functions/
 
 ```sql
 SELECT c.id, c.name,
