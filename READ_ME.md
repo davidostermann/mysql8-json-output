@@ -30,7 +30,10 @@ Database : (keep it empty
 
 ## DB Creation
 
-* via mysql command line cli, copy/paste setup.sql content
+* via mysql command line cli :
+
+  * copy/paste setup.sql content
+  
 * via Adminer :
   
   * click on "run sql command"
