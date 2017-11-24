@@ -69,9 +69,9 @@ GROUP BY t.category_id;
 ```sql
 SELECT u.id, u.lastname, u.firstname, t.id, t.name FROM users as u
 INNER JOIN users_todos as ut ON ut.user_id = u.id
-INNER JOIN todos as t ON ut.user_id = t.id;
+INNER JOIN todos as t ON ut.todo_id = t.id;
 ```
-
+ 
 ### Et en JSON exploitable directement :
 
 ```sql
