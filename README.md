@@ -80,7 +80,7 @@ CONCAT(u.lastname,' ', u.firstname) as name,
 JSON_ARRAYAGG(JSON_OBJECT("id", ut.todo_id, "name", t.name)) as todos
 FROM users as u
 JOIN users_todos as ut ON u.id = ut.user_id
-JOIN todos as t ON t.id = ut.user_id
+JOIN todos as t ON t.id = ut.todo_id
 GROUP BY ut.user_id;
 ```
 
