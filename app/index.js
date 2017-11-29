@@ -6,6 +6,16 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+// middleware to escape simple quotes
+// I use simple quotes in SQL queries (cf. model)
+app.use((req, res, next) => {
+  req.body = Object.entries(req.body).reduce(( acc, [key, value] ) => {
+    acc[key] = (typeof value === 'string') ? value.replace(/\'/g, '\'\'') : value
+    return acc
+  }, {})
+  next();
+})
+
 app.use('/lists', require('./controllers/list'))
 app.use('/cards', require('./controllers/card'))
 app.use('/users', require('./controllers/user'))
