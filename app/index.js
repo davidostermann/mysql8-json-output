@@ -1,11 +1,13 @@
 const express = require('express')
+const cors = require('cors')
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
-app.use('/categories', require('./controllers/category'))
-app.use('/todos', require('./controllers/todo'))
+app.use('/lists', require('./controllers/list'))
+app.use('/cards', require('./controllers/card'))
 app.use('/users', require('./controllers/user'))
 
 const port = process.env.PORT || 3000

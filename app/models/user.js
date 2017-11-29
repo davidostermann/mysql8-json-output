@@ -8,34 +8,31 @@ module.exports = {
   },
   createUser({ firstname, lastname }) {
     return db.asyncQuery(`
-     INSERT INTO users(firstname, lastname)
-     VALUES ('${firstname}', '${lastname}')
-     `)
+    INSERT INTO users(firstname, lastname)
+    VALUES ('${firstname}', '${lastname}')`)
   },
   updateUser({ id, firstname, lastname }) {
     return db.asyncQuery(`
-     UPDATE users 
-     SET firstname='${firstname}', lastname='${lastname}'
-     WHERE id=${id}
-     `)
+    UPDATE users 
+    SET firstname='${firstname}', lastname='${lastname}'
+    WHERE id=${id}`)
   },
   deleteUser(id) {
     return db.asyncQuery(`DELETE FROM users WHERE id=${id}`)
   },
-  addTodo({userId, todoId}) {
+  addCard({userId, cardId}) {
     return db.asyncQuery(`
-    INSERT INTO users_tasks_categories SET 
+    INSERT INTO users_cards_lists SET 
     user_id=${userId}, 
-    task_id=${todoId}, 
-    category_id=${defaultCatId}`)
+    card_id=${cardId}, 
+    list_id=${defaultCatId}`)
   },
-  setCategoryTodo({ userId, todoId, categoryId }) {
+  setListCard({ userId, cardId, listId }) {
     return db.asyncQuery(`
-    UPDATE users_tasks_categories 
-    SET category_id=${categoryId}
+    UPDATE users_cards_lists 
+    SET list_id=${listId}
     WHERE user_id=${userId} 
-    AND task_id=${todoId}
-    `)
+    AND card_id=${cardId}`)
   }
 
 }

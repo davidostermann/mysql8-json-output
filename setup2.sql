@@ -1,27 +1,27 @@
-CREATE DATABASE IF NOT EXISTS tododb2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE tododb2;
-DROP TABLE IF EXISTS users_tasks_categories;
+CREATE DATABASE IF NOT EXISTS boarddb2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE boarddb2;
+DROP TABLE IF EXISTS users_cards_lists;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS tasks;
-DROP TABLE IF EXISTS categories;
-CREATE TABLE categories
+DROP TABLE IF EXISTS cards;
+DROP TABLE IF EXISTS lists;
+CREATE TABLE lists
 (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(255),
   PRIMARY KEY (id)
 );
-INSERT INTO categories(name) VALUES ('Backlogs'),('À faire'),('En cours'),('Fait');
+INSERT INTO lists(name) VALUES ('Backlogs'),('À faire'),('En cours'),('Fait');
 
-CREATE TABLE tasks(
+CREATE TABLE cards(
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(255),
   master_id INT,
   PRIMARY KEY (id),
-  FOREIGN KEY(master_id) REFERENCES categories(id) ON DELETE SET NULL,
+  FOREIGN KEY(master_id) REFERENCES lists(id) ON DELETE SET NULL,
   INDEX (master_id)
 );
 
-INSERT INTO tasks(name, master_id) VALUES 
+INSERT INTO cards(name, master_id) VALUES 
 ('Faire une requête SQL', 4),
 ('Faire une appli NodeJS', 2),
 ('Connecter l''appli à la BDD', 1),
@@ -53,20 +53,20 @@ INSERT INTO users(lastname, firstname) VALUES
 ('Hattou', 'Faïssal'),
 ('Heinis', 'Steve');
 
-CREATE TABLE users_tasks_categories(
+CREATE TABLE users_cards_lists(
  user_id INT,
- task_id INT,
- category_id INT NULL,
+ card_id INT,
+ list_id INT NULL,
  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
- FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
- FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
- PRIMARY KEY (user_id, task_id),
+ FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE,
+ FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE SET NULL,
+ PRIMARY KEY (user_id, card_id),
  INDEX (user_id),
- INDEX (task_id),
- INDEX (category_id)
+ INDEX (card_id),
+ INDEX (list_id)
 );
 
-INSERT INTO users_tasks_categories(user_id, task_id, category_id) VALUES
+INSERT INTO users_cards_lists(user_id, card_id, list_id) VALUES
 (1, 1, 3),
 (1, 9, 3),
 (2, 2, 1),

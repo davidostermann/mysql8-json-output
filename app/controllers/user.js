@@ -13,15 +13,15 @@ module.exports = express.Router()
       .then(result => res.send(result))
       .catch(err => console.log(err))
   })
-  .put('/:userId/todo/:todoId/cat/:categoryId', (req, res) => {
-    const { userId, todoId, categoryId } = req.params;
-    model.setCategoryTodo({ userId, todoId, categoryId })
+  .put('/:userId/card/:cardId/list/:listId', (req, res) => {
+    const { userId, cardId, listId } = req.params;
+    model.setListCard({ userId, cardId, listId })
       .then(result => res.json(result))
       .catch(err => res.json(err))
   })
-  .put('/:userId/todo/:todoId', (req, res) => {
-    const { userId, todoId } = req.params;
-    model.addTodo({ userId, todoId })
+  .put('/:userId/card/:cardId', (req, res) => {
+    const { userId, cardId } = req.params;
+    model.addCard({ userId, cardId })
       .then(result => res.json(result))
       .catch(err => res.json(err))
   })

@@ -1,27 +1,27 @@
-CREATE DATABASE IF NOT EXISTS tododb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE tododb;
-DROP TABLE IF EXISTS users_todos;
+CREATE DATABASE IF NOT EXISTS boarddb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE boarddb;
+DROP TABLE IF EXISTS users_cards;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS todos;
-DROP TABLE IF EXISTS categories;
-CREATE TABLE categories
+DROP TABLE IF EXISTS cards;
+DROP TABLE IF EXISTS lists;
+CREATE TABLE lists
 (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(255),
   PRIMARY KEY (id)
 );
-INSERT INTO categories(name) VALUES ('Backlogs'),('À faire'),('En cours'),('Fait');
+INSERT INTO lists(name) VALUES ('Backlogs'),('À faire'),('En cours'),('Fait');
 
-CREATE TABLE todos(
+CREATE TABLE cards(
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(255),
-  category_id INT,
+  list_id INT,
   PRIMARY KEY (id),
-  FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE SET NULL,
-  INDEX (category_id)
+  FOREIGN KEY(list_id) REFERENCES lists(id) ON DELETE SET NULL,
+  INDEX (list_id)
 );
 
-INSERT INTO todos(name, category_id) VALUES 
+INSERT INTO cards(name, list_id) VALUES 
 ('Faire une requête SQL', 4),
 ('Faire une appli NodeJS', 2),
 ('Connecter l''appli à la BDD', 1),
@@ -53,17 +53,17 @@ INSERT INTO users(lastname, firstname) VALUES
 ('Hattou', 'Faïssal'),
 ('Heinis', 'Steve');
 
-CREATE TABLE users_todos(
+CREATE TABLE users_cards(
  user_id INT,
- todo_id INT,
+ card_id INT,
  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
- FOREIGN KEY (todo_id) REFERENCES todos(id) ON DELETE CASCADE,
- PRIMARY KEY (user_id, todo_id),
+ FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE,
+ PRIMARY KEY (user_id, card_id),
  INDEX (user_id),
- INDEX (todo_id)
+ INDEX (card_id)
 );
 
-INSERT INTO users_todos(user_id, todo_id) VALUES
+INSERT INTO users_cards(user_id, card_id) VALUES
 (1, 1),
 (1, 9),
 (2, 2),

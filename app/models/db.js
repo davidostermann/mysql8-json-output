@@ -4,7 +4,7 @@ const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'example',
-  database: 'tododb2'
+  database: 'boarddb2'
 });
 
 db.connect((err) => {
@@ -19,5 +19,7 @@ db.asyncQuery = (query) => new Promise( (resolve, reject) => {
     err ? reject(err) : resolve(result)
   })
 })
+
+db.quoteEscape = (str) => str.replace('\'', '\'\'')
 
 module.exports = db
