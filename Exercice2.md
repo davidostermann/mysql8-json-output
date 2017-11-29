@@ -1,139 +1,157 @@
-# Exercices 2 (a faire sur tododb2)
+# Exercices 2
 
-## Afficher toutes les tasks du user 1
+## Préambule
+
+Run SQL file setup_ex2.sql (cf. README.md)
+
+## Afficher toutes les cards du user 1
 
 Vous devez associer la table de jointure :
 
 ```sql
-SELECT t.name FROM tasks as t
-JOIN users_tasks_categories as utc ON t.id = utc.task_id
-WHERE utc.user_id = 1;
+SELECT c.name 
+FROM cards as c
+JOIN users_cards_lists as ucl ON c.id = ucl.card_id
+WHERE ucl.user_id = 1;
 ```
 
 Dans l'autre sens :
 
 ```sql
-SELECT t.name FROM users_tasks_categories as utc
-JOIN tasks as t ON t.id = utc.task_id
-WHERE utc.user_id = 1;
+SELECT c.name 
+FROM users_cards_lists as ucl
+JOIN cards as c ON c.id = ucl.card_id
+WHERE ucl.user_id = 1;
 ```
 
-## Afficher tous les users qui ont des tasks en categories 3
+## Afficher tous les users qui ont des cards en lists 3
 
 ```sql
 SELECT u.firstname
-FROM users_tasks_categories as utc
-JOIN users as u ON u.id = utc.user_id
-JOIN tasks as t ON t.id = utc.task_id
-WHERE utc.category_id = 3;
+FROM users_cards_lists as ucl
+JOIN users as u ON u.id = ucl.user_id
+JOIN cards as c ON c.id = ucl.card_id
+WHERE ucl.list_id = 3;
 ```
 
 En mieux avec DISTINCT :
 
 ```sql
 SELECT DISTINCT u.firstname
-FROM users_tasks_categories as utc
-JOIN users as u ON u.id = utc.user_id
-JOIN tasks as t ON t.id = utc.task_id
-WHERE utc.category_id = 3;
+FROM users_cards_lists as ucl
+JOIN users as u ON u.id = ucl.user_id
+JOIN cards as c ON c.id = ucl.card_id
+WHERE ucl.list_id = 3;
 ```
 
-## Pour plus de détail, ajouter, pour chaque utilisateur, le nom des tasks qu'ils ont en catégorie 1
+## Pour plus de détail, ajouter, pour chaque utilisateur, le nom des cards qu'ils ont en liste 1
 
 ```sql
-SELECT u.firstname, GROUP_CONCAT( DISTINCT t.name SEPARATOR ', ' )
-FROM users_tasks_categories as utc
-JOIN users as u ON u.id = utc.user_id
-JOIN tasks as t ON t.id = utc.task_id
-WHERE utc.category_id = 3
+SELECT u.firstname, GROUP_CONCAT( DISTINCT c.name SEPARATOR ', ' )
+FROM users_cards_lists as ucl
+JOIN users as u ON u.id = ucl.user_id
+JOIN cards as c ON c.id = ucl.card_id
+WHERE ucl.list_id = 3
 GROUP BY u.id;
 ```
 
-## Afficher les tasks avec les categories associés:
+## Afficher les cards avec les lists associés:
 
 ```sql
-SELECT t.id, t.name, c.name
-FROM tasks as t
-JOIN users_tasks_categories as utc ON utc.task_id=t.id
-JOIN categories as c ON c.id = utc.category_id
-ORDER BY t.id
+SELECT c.id, c.name, cat.name
+FROM cards as c
+JOIN users_cards_lists as ucl ON ucl.card_id = c.id
+JOIN lists as cat ON cat.id = ucl.list_id
+ORDER BY c.id
 ```
 
 En mieux en groupant : 
 
 ```sql 
-SELECT t.id as 'task id', t.name, GROUP_CONCAT( DISTINCT  c.name )
-FROM tasks as t
-JOIN users_tasks_categories as utc ON utc.task_id=t.id
-JOIN categories as c ON c.id = utc.category_id
-GROUP BY t.id
-ORDER BY t.id
+SELECT c.id as 'card id', c.name, GROUP_CONCAT( DISTINCT  cat.name )
+FROM cards as c
+JOIN users_cards_lists as ucl ON ucl.card_id = c.id
+JOIN lists as cat ON cat.id = ucl.list_id
+GROUP BY c.id
+ORDER BY c.id
 ```
 
 En JSON :
 
 ```sql 
-SELECT t.id as 'task id', t.name, 
-GROUP_CONCAT( DISTINCT CONCAT('{"id":', c.id, ', "name":', c.name ,'}') )
-FROM tasks as t
-JOIN users_tasks_categories as utc ON utc.task_id=t.id
-JOIN categories as c ON c.id = utc.category_id
-GROUP BY t.id
-ORDER BY t.id
+SELECT c.id as 'card id', c.name, 
+GROUP_CONCAT( DISTINCT CONCAT('{"id":', cat.id, ', "name":', cat.name ,'}') )
+FROM cards as c
+JOIN users_cards_lists as ucl ON ucl.card_id=t.id
+JOIN lists as cat ON cat.id = ucl.list_id
+GROUP BY c.id
+ORDER BY c.id
 ```
 
 En JSON avec SQL8
 (Attention le DISTINCT ne fonctionne pas avec JSON)
 
 ```sql
-SELECT t.id as 'task id', t.name, JSON_ARRAYAGG( JSON_OBJECT('id', c.id, 'name', c.name ) )
-FROM tasks as t
-JOIN users_tasks_categories as utc ON utc.task_id=t.id
-JOIN categories as c ON c.id = utc.category_id
-GROUP BY t.id
-ORDER BY t.id
+SELECT c.id as 'card id', c.name, JSON_ARRAYAGG( JSON_OBJECT('id', cat.id, 'name', cat.name ) )
+FROM cards as c
+JOIN users_cards_lists as ucl ON ucl.card_id = t.id
+JOIN lists as cat ON cat.id = ucl.list_id
+GROUP BY c.id
+ORDER BY c.id
 ```
 
-## Afficher les catégories avec leurs tâches associées et avec pour chaque tâches, la liste des utilisateurs associés
+## Afficher les listes avec leurs tâches associées et avec pour chaque tâches, la liste des utilisateurs associés
 
 ```sql
-SELECT c.name, GROUP_CONCAT( CONCAT('{"task":', rutc.tname, ', "users":[', rutc.users ,']}')) as tasks
+SELECT cat.name, GROUP_CONCAT( CONCAT('{"card":', rucl.cname, ', "users":[', rucl.users ,']}')) as cards
 FROM (
-  SELECT utc.category_id as cid, t.id as tid, t.name as tname, GROUP_CONCAT( u.firstname ) as users
-  FROM users_tasks_categories as utc
-  JOIN users as u ON u.id = utc.user_id
-  JOIN tasks as t ON t.id = utc.task_id
-  GROUP BY utc.category_id, utc.task_id
-) as rutc
-JOIN categories as c ON c.id = rutc.cid
-GROUP BY c.id
+  SELECT ucl.list_id as lid, c.id as cid, c.name as cname, GROUP_CONCAT( u.firstname ) as users
+  FROM users_cards_lists as ucl
+  JOIN users as u ON u.id = ucl.user_id
+  JOIN cards as c ON c.id = ucl.card_id
+  GROUP BY ucl.list_id, ucl.card_id
+) as rucl
+JOIN lists as cat ON cat.id = rucl.cid
+GROUP BY cat.id
 ```
 
 *Attention, les firstname ne sont pas JSON compatible. Il manque les doublequote*
 
-En SQL 8 :
+### Better En SQL 8 :
 
 ```sql
-SELECT c.name, JSON_ARRAYAGG( JSON_OBJECT('task', rutc.tname, 'users', rutc.users )) as tasks
+SELECT cat.name, JSON_ARRAYAGG( JSON_OBJECT('card', rucl.cname, 'users', rucl.users )) as cards
 FROM (
-  SELECT t.id as tid, t.name as tname, utc.category_id as cid, JSON_ARRAYAGG( u.firstname ) as users
-  FROM users_tasks_categories as utc
-  JOIN users as u ON u.id = utc.user_id
-  JOIN tasks as t ON t.id = utc.task_id
-  GROUP BY utc.category_id, utc.task_id
-) as rutc
-JOIN categories as c ON c.id = rutc.cid
-GROUP BY c.id
+  SELECT c.id as cid, c.name as cname, ucl.list_id as lid, JSON_ARRAYAGG( u.firstname ) as users
+  FROM users_cards_lists as ucl
+  JOIN users as u ON u.id = ucl.user_id
+  JOIN cards as c ON c.id = ucl.card_id
+  GROUP BY ucl.list_id, ucl.card_id
+) as rucl
+JOIN lists as cat ON cat.id = rucl.cid
+GROUP BY cat.id
 ```
 
-## Récupérer par catégories, toutes les todos ordonnées par categorie. Chaque todos doit comprendre un tableau de user.
+## Récupérer par listes, toutes les todos ordonnées par liste. Chaque todos doit comprendre un tableau de user.
 
 ```sql
-SELECT category_id, c.name, task_id, t.name, JSON_ARRAYAGG(u.firstname), COUNT(DISTINCT user_id) FROM 
-users_tasks_categories as utc
-JOIN categories as c ON c.id = category_id
-JOIN tasks as t ON t.id = task_id
+SELECT list_id, cat.name, card_id, c.name, JSON_ARRAYAGG(u.firstname), COUNT(card_id) 
+FROM users_cards_lists as ucl
+JOIN lists as cat ON cat.id = list_id
+JOIN cards as c ON c.id = card_id
 JOIN users as u ON u.id = user_id
-WHERE task_id = 3
-GROUP BY category_id, task_id
+WHERE card_id = 3
+GROUP BY list_id, card_id
+```
+
+### Avec un distinct
+
+```sql
+SELECT list_id, cat.name, card_id, c.name, JSON_ARRAYAGG(u.firstname), COUNT(DISTINCT user_id) 
+FROM users_cards_lists as ucl
+JOIN lists as cat ON cat.id = list_id
+JOIN cards as c ON c.id = card_id
+JOIN users as u ON u.id = user_id
+WHERE card_id = 3
+GROUP BY list_id, card_id
 ```
