@@ -1,5 +1,5 @@
 const db = require('./db')
-const defaultCatId = 1;
+const defaultListId = 1;
 
 module.exports = {
 
@@ -25,7 +25,7 @@ module.exports = {
     INSERT INTO users_cards_lists SET 
     user_id=${userId}, 
     card_id=${cardId}, 
-    list_id=${defaultCatId}`)
+    list_id=${defaultListId}`)
   },
   setListCard({ userId, cardId, listId }) {
     return db.asyncQuery(`
