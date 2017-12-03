@@ -20,6 +20,11 @@ app.use('/lists', require('./controllers/list'))
 app.use('/cards', require('./controllers/card'))
 app.use('/users', require('./controllers/user'))
 
+app.all('/*', (req, res, ) => {
+  res.status(404).send('je suis la 404')
+})
+
+
 const port = process.env.PORT || 3000
 
 app.listen(port, () => {

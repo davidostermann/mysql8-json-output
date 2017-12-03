@@ -15,22 +15,19 @@ INSERT INTO lists(name) VALUES ('Backlogs'),('À faire'),('En cours'),('Fait');
 CREATE TABLE cards(
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(255),
-  master_id INT,
-  PRIMARY KEY (id),
-  FOREIGN KEY(master_id) REFERENCES lists(id) ON DELETE SET NULL,
-  INDEX (master_id)
+  PRIMARY KEY (id)
 );
 
-INSERT INTO cards(name, master_id) VALUES 
-('Faire une requête SQL', 4),
-('Faire une appli NodeJS', 2),
-('Connecter l''appli à la BDD', 1),
-('Créer des routes d''API', 2),
-('Utiliser un ORM sur une base relationnelle', 1),
-('Utiliser un ORM sur une base non-relationnelle', 4),
-('Créer une web app pour interroger l''API', 2),
-('Créer une relation One to Many', 3),
-('Créer une relation Many to Many', 3);
+INSERT INTO cards(name) VALUES 
+('Faire une requête SQL'),
+('Faire une appli NodeJS'),
+('Connecter l''appli à la BDD'),
+('Créer des routes d''API'),
+('Utiliser un ORM sur une base relationnelle'),
+('Utiliser un ORM sur une base non-relationnelle'),
+('Créer une web app pour interroger l''API'),
+('Créer une relation One to Many'),
+('Créer une relation Many to Many');
 
 CREATE TABLE users(
   id INT NOT NULL AUTO_INCREMENT,

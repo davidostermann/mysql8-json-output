@@ -24,6 +24,10 @@ module.exports = {
     // cards has to be parse as JSON
     .then(result => result.map(item => Object.assign(item, { cards: JSON.parse(item.cards) })))
   },
+  /**
+   * none arguments
+   * return a list of lists
+   */
   getLists() {
     return db.asyncQuery('SELECT * FROM lists ORDER BY id')
   },
